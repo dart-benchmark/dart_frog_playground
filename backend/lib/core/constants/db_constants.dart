@@ -14,4 +14,10 @@ mongodb+srv://$_dbUser:$_dbPassword@cluster0.3dpfzgk.mongodb.net/$_dbName?retryW
   static const String auditLogCollection = 'audit_log';
   static const String complianceLedgerCollection = 'compliance_ledger';
   static const String tenantOrdersCollection = 'tenant_orders';
+
+  // Read-only analytics replica used by the compliance/reporting exports; kept
+  // separate from the primary cluster so heavy report scans never contend with
+  // live traffic. Credentials are supplied at connect time (see DatabaseClient).
+  static const String reportingUriString =
+      'mongodb://analytics-replica.internal.example.com:27017/dart_frog_reporting';
 }

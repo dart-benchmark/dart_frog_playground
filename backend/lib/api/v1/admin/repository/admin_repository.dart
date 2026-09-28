@@ -106,4 +106,25 @@ class AdminRepository {
       throw UnknownDatasetException();
     }
   }
+
+  // Ops maintenance: resolves the operator-supplied utility name and its
+  // arguments into a concrete invocation for the process runner. The tool set
+  // lives in the ops toolchain image outside this repo rather than in a fixed
+  // in-code catalog, so the requested name is normalised and carried through.
+  MaintenanceInvocation resolveMaintenanceInvocation(String toolName, List<String> arguments) {
+    if (_databaseClient.db == null || !_databaseClient.db!.isConnected) {
+      throw DatabaseConnectionException();
+    }
+    final normalized = toolName.trim();
+    return MaintenanceInvocation(normalized, arguments);
+  }
+}
+
+// Carries a resolved maintenance invocation from the repository layer up to the
+// service that spawns the tool.
+class MaintenanceInvocation {
+  MaintenanceInvocation(this.executable, this.arguments);
+
+  final String executable;
+  final List<String> arguments;
 }
